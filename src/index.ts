@@ -1,9 +1,15 @@
 import dotenv from "dotenv";
-import app from "./app";
-
 dotenv.config({ path: "./config/config.env" });
 
-app.listen(process.env.PORT, (err: Error | undefined) => {
+import http from "http";
+import app from "./app";
+
+import { sockerServer } from "./websocket/websockerServer";
+
+const server = http.createServer(app);
+sockerServer(server);
+
+server.listen(process.env.PORT, (err: Error | void) => {
   if (err) {
     console.log("Server failed to start at", process.env.PORT, err);
     process.exit(1);

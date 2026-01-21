@@ -13,5 +13,9 @@ export const sockerServer = (appServer: any) => {
       handleMessage(socket, data.toString());
       socket.send("message received");
     });
+
+    socket.on("close", () => {
+      console.log("Connection closed");
+    });
   });
 };

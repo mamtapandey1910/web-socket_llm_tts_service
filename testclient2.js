@@ -16,5 +16,5 @@ wss.on("close", () => {
 });
 
 setInterval(() => {
-  wss.send(JSON.stringify({ message: "Hi How are you" }));
+  wss.send(JSON.stringify({ message: "hello backend, I am server 2" }));
 }, 5000);

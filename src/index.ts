@@ -4,7 +4,7 @@ dotenv.config({ path: "./config/config.env" });
 import http from "http";
 import app from "./app";
 
-import { sockerServer } from "./websocket/websockerServer";
+import { sockerServer } from "./server/wsServer";
 
 const server = http.createServer(app);
 sockerServer(server);

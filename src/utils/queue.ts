@@ -1,5 +1,3 @@
-// import { getTextToSpeech } from "../services/ttsService";
-
 import { getTextToSpeech } from "../services/ttsService";
 
 // This is a customise queue where receiving the buffered segments from LLM and CAll TEXT to Speech API and send it to client once the message is in the queue

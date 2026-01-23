@@ -1,4 +1,4 @@
-import { WebSocket } from "ws";
+import { WebSocket, RawData } from "ws";
 import { Request } from "express";
 import { handleMessage } from "./routeMessage";
 import { createSession } from "../sessions/sessionStore";
@@ -9,7 +9,7 @@ export const handleWSConnection = (socket: WebSocket, req: Request) => {
 
   const session = createSession(socket);
 
-  socket.on("message", (data): void => {
+  socket.on("message", (data: RawData): void => {
     socket.send("Thinking......");
     handleMessage(session, data);
   });

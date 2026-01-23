@@ -1,10 +1,17 @@
-import { randomUUID } from "crypto";
+import { randomUUID, RandomUUIDOptions } from "crypto";
+import {
+  createSessionType,
+  SessionType,
+} from "../types/sessionType/sessionStoreType";
+import WebSocket from "ws";
 
 const sessionData = new Map();
 
-export const createSession = (ws: any) => {
-  const session = {
-    id: randomUUID,
+export const createSession: createSessionType = (
+  ws: WebSocket,
+): SessionType => {
+  const session: SessionType = {
+    id: randomUUID(),
     ws,
     history: [],
     busy: false,
@@ -14,6 +21,6 @@ export const createSession = (ws: any) => {
   return session;
 };
 
-const destroySession = (sessionId: any) => {
+const destroySession = (sessionId: any): void => {
   sessionData.delete(sessionId);
 };

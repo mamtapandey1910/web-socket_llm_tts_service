@@ -1,22 +1,30 @@
 import { openAiClient } from "../agentConfig/openaiConfig";
-import { splitTextIntoSegment } from "../util/segmentText";
 
-import { getTextToSpeech } from "./ttsService";
-import { EventEmitter } from "stream";
+import { SessionType } from "../types/sessionType/sessionStoreType";
+import { catchAsynchError } from "../utils/catchAsyncError";
+import EventEmitter from "events";
+import { inputDataType } from "../types/llmServiceType/llmServiceType";
 
-export const getLLMTextResponse = async (promtpText: any) => {
-  // console.log("promtpText", promtpText);
-  const response = await openAiClient.responses.create({
-    model: "gpt-5-nano",
-    input: promtpText.message,
-  });
+export const getllmResponseStream = catchAsynchError(
+  async (data: inputDataType, session: SessionType): Promise<any> => {
+    const eventEmitter = new EventEmitter();
 
-  const textSegment = splitTextIntoSegment(response.output_text, 500);
+    const streams = openAiClient.responses.stream({
+      model: "gpt-4.1",
+      input: data.message,
+    });
 
-  // console.log(response.output_text);
-  const textArray: any = textSegment?.map((text) => getTextToSpeech(text));
-  const allAudioSegments = await Promise.all(textArray);
-
-  // return await getTextToSpeech(response.output_text);
-  console.log("allAudioSegments", allAudioSegments);
-};
+    try {
+      for await (const segment of streams) {
+        if (segment && segment.type === "response.output_text.delta") {
+          console.log("segment", segment);
+          eventEmitter.emit("segment", { messageId: data.id, segment });
+        }
+      }
+      eventEmitter.emit("end");
+    } catch (err) {
+      eventEmitter.emit("error", err);
+    }
+    return eventEmitter;
+  },
+);

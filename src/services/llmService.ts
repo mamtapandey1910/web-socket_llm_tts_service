@@ -1,30 +1,26 @@
 import { openAiClient } from "../agentConfig/openaiConfig";
-
-import { SessionType } from "../types/sessionType/sessionStoreType";
-import { catchAsynchError } from "../utils/catchAsyncError";
 import EventEmitter from "events";
-import { inputDataType } from "../types/llmServiceType/llmServiceType";
 
-export const getllmResponseStream = catchAsynchError(
-  async (data: inputDataType, session: SessionType): Promise<any> => {
-    const eventEmitter = new EventEmitter();
+export const generateLLMTextUsingStream = async (promptText: string) => {
+  const emitter = new EventEmitter();
 
-    const streams = openAiClient.responses.stream({
-      model: "gpt-4.1",
-      input: data.message,
-    });
+  const response = await openAiClient.chat.completions.create({
+    model: "gpt-4",
+    messages: [{ role: "user", content: promptText }],
+    stream: true,
+  });
 
+  (async () => {
     try {
-      for await (const segment of streams) {
-        if (segment && segment.type === "response.output_text.delta") {
-          console.log("segment", segment);
-          eventEmitter.emit("segment", { messageId: data.id, segment });
-        }
+      for await (const chunk of response) {
+        const content = chunk.choices[0]?.delta?.content;
+        if (content) emitter.emit("text", content);
       }
-      eventEmitter.emit("end");
+      emitter.emit("end");
     } catch (err) {
-      eventEmitter.emit("error", err);
+      emitter.emit("error", err);
     }
-    return eventEmitter;
-  },
-);
+  })();
+
+  return emitter;
+};

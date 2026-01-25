@@ -15,7 +15,9 @@ export const generateLLMTextUsingStream = async (promptText: string) => {
       try {
         for await (const chunk of response) {
           const content = chunk.choices[0]?.delta?.content;
-          if (content) emitter.emit("text", content);
+          if (content) {
+            emitter.emit("text", content);
+          }
         }
         emitter.emit("end");
       } catch (err) {

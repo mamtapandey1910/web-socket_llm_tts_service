@@ -4,7 +4,6 @@ const wss = new webSocket("ws://localhost:8000");
 
 wss.on("open", () => {
   console.log("Connected");
-  //   wss.send("hello backend");
 });
 
 wss.on("message", (data) => {
@@ -15,6 +14,6 @@ wss.on("close", () => {
   console.log("Connection Closed");
 });
 
-setInterval(() => {
-  wss.send(JSON.stringify({ message: "Hi How are you" }));
-}, 5000);
+setTimeout(() => {
+  wss.send(JSON.stringify({ message: "Tell me a short story" }));
+}, 2000);

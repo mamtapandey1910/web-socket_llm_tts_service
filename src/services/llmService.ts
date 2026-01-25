@@ -23,7 +23,7 @@ export const generateLLMTextUsingStream = async (promptText: string) => {
       }
     })();
   } catch (err: any) {
-    if (err.code === "UND_ERR_SOCKET") {
+    if (err.type === "UND_ERR_SOCKET") {
       console.log(
         "UND_ERR_SOCKET Error Occured while fetching LLM text, try again",
       );

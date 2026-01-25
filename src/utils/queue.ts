@@ -1,13 +1,16 @@
 import { getTextToSpeech } from "../services/ttsService";
+import { WebSocket } from "http";
 
 // This is a customise queue where receiving the buffered segments from LLM and CAll TEXT to Speech API and send it to client once the message is in the queue
 export class TTSQueue {
   private queue: string[] = [];
   private processing = false;
   private onAudio: (audio: Buffer) => void;
+  private socket: WebSocket;
 
-  constructor(onAudio: (audio: Buffer) => void) {
+  constructor(socket: WebSocket, onAudio: (audio: Buffer) => void) {
     this.onAudio = onAudio;
+    this.socket = socket;
   }
 
   // process the message and send it to the client
@@ -19,7 +22,7 @@ export class TTSQueue {
       const text = this.queue.shift();
       if (!text) continue;
 
-      const audio = await getTextToSpeech(text);
+      const audio = await getTextToSpeech(this.socket, text);
       this.onAudio(audio);
     }
 

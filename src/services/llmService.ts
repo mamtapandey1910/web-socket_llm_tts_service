@@ -4,7 +4,7 @@ import { CustomError } from "../utils/error";
 import { catchSocketAsynchAsynchError } from "../utils/catchAsyncError";
 
 export const generateLLMTextUsingStream = catchSocketAsynchAsynchError(
-  async (promptText: string) => {
+  async (socket, promptText: string) => {
     const emitter = new EventEmitter();
     if (!emitter) {
       throw new CustomError(

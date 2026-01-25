@@ -7,6 +7,6 @@ import { streamLLMToTTS } from "../orchestrateServices/streamLLMtoTTS";
 export const handleMessage = catchSocketAsynchAsynchError(
   async (session: any, rawData: any) => {
     const data = JSON.parse(rawData);
-    await streamLLMToTTS(data.message, session);
+    await streamLLMToTTS(session.ws, data.message);
   },
 );

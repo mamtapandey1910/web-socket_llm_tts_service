@@ -6,11 +6,11 @@ import { CustomError } from "../utils/error";
 
 // This function is to get the LLM generated data, make it a buffer string of minimum size 150 and call Text to Speech API to convert it to audio.
 export const streamLLMToTTS = catchSocketAsynchAsynchError(
-  async (promptText: string, session: any) => {
+  async (session: any, promptText: string) => {
     // It will return event emitter hence listening to it's event to access chunks
-    const llmStream = await generateLLMTextUsingStream(promptText);
+    const llmStream = await generateLLMTextUsingStream(session, promptText);
 
-    if (!session.ws || !llmStream) {
+    if (!session || !llmStream) {
       throw new CustomError(
         "streamLLMToTTS : session.ws or  llmStream is possibly undefined",
       );
@@ -19,9 +19,9 @@ export const streamLLMToTTS = catchSocketAsynchAsynchError(
     // text approx 150 text long to send it to TTSqueue
     let textBuffer = "";
 
-    const ttsQueue = new TTSQueue((audio) => {
-      if (session.ws.readyState === session.ws.OPEN) {
-        session.ws.send(audio, { binary: true });
+    const ttsQueue = new TTSQueue(session, (audio) => {
+      if (session.readyState === session.OPEN) {
+        session.send(audio, { binary: true });
       }
     });
 
@@ -53,8 +53,8 @@ export const streamLLMToTTS = catchSocketAsynchAsynchError(
 
     llmStream.on("error", (err: Error) => {
       console.error("LLM error:", err);
-      if (session.ws.readyState === session.ws.OPEN) {
-        session.ws.close();
+      if (session.readyState === session.OPEN) {
+        session.close();
       }
     });
   },

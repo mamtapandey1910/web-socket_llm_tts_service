@@ -2,12 +2,19 @@ import { TTSQueue } from "../utils/queue";
 import { splitTextIntoSegment } from "../utils/segmentText";
 import { generateLLMTextUsingStream } from "../services/llmService";
 import { catchSocketAsynchAsynchError } from "../utils/catchAsyncError";
+import { CustomError } from "../utils/error";
 
 // This function is to get the LLM generated data, make it a buffer string of minimum size 150 and call Text to Speech API to convert it to audio.
 export const streamLLMToTTS = catchSocketAsynchAsynchError(
   async (promptText: string, session: any) => {
     // It will return event emitter hence listening to it's event to access chunks
     const llmStream = await generateLLMTextUsingStream(promptText);
+
+    if (!session.ws || !llmStream) {
+      throw new CustomError(
+        "streamLLMToTTS : session.ws or  llmStream is possibly undefined",
+      );
+    }
 
     // text approx 150 text long to send it to TTSqueue
     let textBuffer = "";

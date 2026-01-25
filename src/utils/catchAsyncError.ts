@@ -7,9 +7,9 @@ export const catchSocketAsynchAsynchError = (
   ws?: WebSocket,
   errorType?: any,
 ) => {
-  return async (...args: any) => {
+  return async (...args: any): Promise<any> => {
     try {
-      await func(...args);
+      return await func(...args);
     } catch (error: unknown) {
       if (ws && ws?.readyState === ws?.OPEN && error instanceof Error) {
         sendError(ws, errorType, error.message);

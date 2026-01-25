@@ -5,11 +5,12 @@ import { createSession } from "../sessions/sessionStore";
 import { sendMessage } from "../utils/sendMessage";
 
 export const handleWSConnection = (socket: WebSocket, req: Request) => {
-  console.log(req.body?.user);
-
   const session = createSession(socket);
 
   socket.on("message", (data: RawData): void => {
+    if (!data) {
+      sendMessage(socket, { type: "error", message: "Empty message received" });
+    }
     socket.send("Thinking......");
     handleMessage(session, data);
   });

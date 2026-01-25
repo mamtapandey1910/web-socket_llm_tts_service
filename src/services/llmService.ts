@@ -6,6 +6,12 @@ import { catchSocketAsynchAsynchError } from "../utils/catchAsyncError";
 export const generateLLMTextUsingStream = catchSocketAsynchAsynchError(
   async (promptText: string) => {
     const emitter = new EventEmitter();
+    if (!emitter) {
+      throw new CustomError(
+        "Error occured in generateLLMTextUsingStream: emitter is possibly",
+        emitter,
+      );
+    }
 
     const openAi = openAiClient();
     if (!openAi) {

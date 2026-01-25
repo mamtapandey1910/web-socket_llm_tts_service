@@ -1,7 +1,7 @@
 import { WebSocketServer, WebSocket } from "ws";
 import { Request } from "express";
 import { handleWSConnection } from "./connection";
-import { sendError } from "../utils/error";
+import { CustomError, sendError } from "../utils/error";
 
 export const sockerServer = (appServer: any) => {
   try {
@@ -10,7 +10,7 @@ export const sockerServer = (appServer: any) => {
     wss.on("connection", handleWSConnection);
 
     wss.on("error", (err) => {
-      console.log("Error occured in Websocket connection");
+      new CustomError("Error occured in Websocket connection");
     });
   } catch (err: unknown) {
     console.log("something went wrong globally", err);

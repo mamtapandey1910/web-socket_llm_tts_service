@@ -3,11 +3,11 @@ dotenv.config({ path: "./config/config.env" });
 
 import http from "http";
 import app from "./app";
-
 import { sockerServer } from "./server/wsServer";
+import { closeWebSocketServer } from "./server/wsServer";
 
-const server = http.createServer(app);
-sockerServer(server);
+export const server = http.createServer(app);
+const wss = sockerServer(server);
 
 server.listen(process.env.PORT, (err: Error | void) => {
   if (err) {
@@ -17,12 +17,21 @@ server.listen(process.env.PORT, (err: Error | void) => {
   console.log("server is listening on port ", process.env.PORT);
 });
 
-process.on("uncaughtException", (err: Error) => {
-  console.log("Uncaught exception", err);
-  process.exit(1);
-});
+// Shutdown connection and provide reason. in consolelog
+const shutdown = (reason: string, err?: unknown) => {
+  console.log(`Shutting down due to ${reason}`);
+  if (err) console.error(err);
 
-process.on("unhandledRejection", (err: Error) => {
-  console.log("unhandledRejection", err);
-  process.exit(1);
-});
+  server.close(() => {
+    console.log("HTTP server closed");
+  });
+  closeWebSocketServer();
+  process.exit(0);
+};
+
+// when we stop using ctrl+c then it shoyld close connection
+process.on("SIGINT", () => shutdown("SIGINT"));
+// when operation system stop it should close the connection
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("uncaughtException", (err) => shutdown("uncaughtException", err)); // self explonatory
+process.on("unhandledRejection", (err) => shutdown("unhandledRejection", err)); // self explanotry

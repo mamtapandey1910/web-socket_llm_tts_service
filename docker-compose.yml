@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  tts-service:
+    image: mamtapandey/v1:ttsApp
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      SEGMENT_SIZE: 150
+      PORT: 8000
+    stdin_open: true
+    tty: true

@@ -3,16 +3,18 @@ import { splitTextIntoSegment } from "../utils/segmentText";
 import { generateLLMTextUsingStream } from "../services/llmService";
 import { catchSocketAsyncError } from "../utils/catchAsyncError";
 import { CustomError } from "../utils/error";
+import { StreamLLMToTTSType } from "../types/orchestrateServicesType/streamLLMtoTTSType";
+import { WebSocket } from "ws";
 
 // This function is to get the LLM generated data, make it a buffer string of minimum size 150 and call Text to Speech API to convert it to audio.
-export const streamLLMToTTS = catchSocketAsyncError(
-  async (session: any, promptText: string) => {
+export const streamLLMToTTS: StreamLLMToTTSType = catchSocketAsyncError(
+  async (session: WebSocket, promptText: string) => {
     // It will return event emitter hence listening to it's event to access chunks
     const llmStream = await generateLLMTextUsingStream(session, promptText);
 
     if (!session || !llmStream) {
       throw new CustomError(
-        "streamLLMToTTS : session.ws or  llmStream is possibly undefined",
+        "streamLLMToTTS : session or  llmStream is possibly undefined",
       );
     }
 
@@ -21,7 +23,7 @@ export const streamLLMToTTS = catchSocketAsyncError(
 
     const ttsQueue = new TTSQueue(session, (audio) => {
       if (session.readyState === session.OPEN) {
-        session.send(audio, { binary: true });
+        session.send(audio);
       }
     });
 

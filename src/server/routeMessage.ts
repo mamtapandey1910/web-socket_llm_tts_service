@@ -1,12 +1,13 @@
 import { WebSocket, RawData } from "ws";
 import { sendMessage } from "../utils/sendMessage";
-// import { streamLLMToTTS } from "../services/llmService";
 import { catchSocketAsyncError } from "../utils/catchAsyncError";
 import { streamLLMToTTS } from "../orchestrateServices/streamLLMtoTTS";
+import { SessionType } from "../types/sessionType/sessionStoreType";
+import { handleMessageType } from "../types/serverTypes/routeMessageType";
 
-export const handleMessage = catchSocketAsyncError(
-  async (session: any, rawData: any) => {
+export const handleMessage: handleMessageType = catchSocketAsyncError(
+  async (session: WebSocket, rawData: any) => {
     const data = JSON.parse(rawData);
-    await streamLLMToTTS(session.ws, data.message);
+    await streamLLMToTTS(session, data.message);
   },
 );

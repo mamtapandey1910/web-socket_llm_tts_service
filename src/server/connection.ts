@@ -4,15 +4,16 @@ import { handleMessage } from "./routeMessage";
 import { createSession } from "../sessions/sessionStore";
 import { sendMessage } from "../utils/sendMessage";
 import { catchSocketAsyncError } from "../utils/catchAsyncError";
+import { handleWSConnectionType } from "../types/serverTypes/connectionTypes";
 
-export const handleWSConnection = catchSocketAsyncError(
-  async (socket: any, req: Request) => {
+export const handleWSConnection: handleWSConnectionType = catchSocketAsyncError(
+  async (socket: WebSocket, req: Request) => {
     if (!socket) {
       return;
     }
     const session = createSession(socket);
 
-    socket.on("message", (data: RawData): void => {
+    socket.on("message", async (data: RawData): Promise<void> => {
       if (!data) {
         sendMessage(socket, {
           type: "error",
@@ -20,7 +21,7 @@ export const handleWSConnection = catchSocketAsyncError(
         });
       }
       sendMessage(socket, JSON.stringify({ message: "Thinking..." }));
-      handleMessage(session, data);
+      handleMessage(socket, data);
     });
 
     socket.on("close", () => {

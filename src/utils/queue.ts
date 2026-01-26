@@ -1,5 +1,5 @@
 import { getTextToSpeech } from "../services/ttsService";
-import { WebSocket } from "http";
+import { WebSocket } from "ws";
 
 // This is a customise queue where receiving the buffered segments from LLM and CAll TEXT to Speech API and send it to client once the message is in the queue
 export class TTSQueue {
@@ -28,7 +28,7 @@ export class TTSQueue {
 
     this.processing = false;
   }
-  // enqueue the message
+  // send message to the queue
   enqueue(text: string) {
     this.queue.push(text);
     this.process();

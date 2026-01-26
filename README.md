@@ -28,55 +28,38 @@ prerequisites:
 
 ## Folder Structure
 
-web-socket_llm_tts_service/
-├── src/
-│ ├── app.ts
-│ ├── index.ts
-│ ├── agentConfig/
-│ │ └── openaiConfig.ts
-│ ├── orchestrateServices/
-│ │ └── streamLLMtoTTS.ts
-│ ├── server/
-│ │ ├── connection.ts // handles websocket connections
-│ │ ├── handleMessage.ts
-│ │ └── wsServer.ts
-│ ├── services/
-│ │ ├── llmService.ts
-│ │ └── ttsService.ts
-│ ├── sessions/
-│ │ └── sessionStore.ts
-│ ├── types/
-│ │ ├── agentConfigType/
-│ │ │ └── openaiConfigType.ts
-│ │ ├── llmServiceType/
-│ │ │ └── llmServiceType.ts
-│ │ ├── orchestrateServicesType/
-│ │ │ └── streamLLMtoTTSType.ts
-│ │ ├── serverTypes/
-│ │ │ ├── connectionTypes.ts
-│ │ │ └── routeMessageType.ts
-│ │ ├── sessionType/
-│ │ │ └── sessionStoreType.ts
-│ │ └── utilTypes/
-│ │ └── errorType.ts
-│ └── utils/
-│ ├── catchAsyncError.ts
-│ ├── error.ts
-│ ├── queue.ts
-│ ├── segmentText.ts
-│ └── sendMessage.ts
-├── tests/
-│ ├── websocket.test.js
-│ ├── llm.test.js
-│ └── tts.test.js
+```
+src/
+├── app.ts
+├── index.ts
 ├── config/
-│ ├── default.json
-│ └── production.json
-├── public/
-│ └── index.html
-├── package.json
-├── .env
-└── README.md
+│   └── openaiConfig.ts
+├── orchestrators/
+│   └── streamLLMtoTTS.ts
+├── server/
+│   ├── connection.ts
+│   ├── handleMessage.ts
+│   └── wsServer.ts
+├── services/
+│   ├── llmService.ts
+│   └── ttsService.ts
+├── sessions/
+│   └── sessionStore.ts
+├── types/
+│   ├── agentConfig.ts
+│   ├── llmService.ts
+│   ├── orchestrateServices.ts
+│   ├── server.ts
+│   ├── session.ts
+│   └── utils.ts
+└── utils/
+    ├── catchAsyncError.ts
+    ├── error.ts
+    ├── queue.ts
+    ├── segmentText.ts
+    └── sendMessage.ts
+
+```
 
 explaination of folders:
 

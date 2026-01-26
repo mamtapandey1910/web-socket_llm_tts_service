@@ -1,9 +1,9 @@
 import { openAiClient } from "../agentConfig/openaiConfig";
 import EventEmitter from "events";
 import { CustomError } from "../utils/error";
-import { catchSocketAsynchAsynchError } from "../utils/catchAsyncError";
+import { catchSocketAsyncError } from "../utils/catchAsyncError";
 
-export const generateLLMTextUsingStream = catchSocketAsynchAsynchError(
+export const generateLLMTextUsingStream = catchSocketAsyncError(
   async (socket, promptText: string) => {
     const emitter = new EventEmitter();
     if (!emitter) {

@@ -3,9 +3,9 @@ import { Request } from "express";
 import { handleMessage } from "./routeMessage";
 import { createSession } from "../sessions/sessionStore";
 import { sendMessage } from "../utils/sendMessage";
-import { catchSocketAsynchAsynchError } from "../utils/catchAsyncError";
+import { catchSocketAsyncError } from "../utils/catchAsyncError";
 
-export const handleWSConnection = catchSocketAsynchAsynchError(
+export const handleWSConnection = catchSocketAsyncError(
   async (socket: any, req: Request) => {
     if (!socket) {
       return;

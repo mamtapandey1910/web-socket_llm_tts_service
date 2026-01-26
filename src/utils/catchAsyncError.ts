@@ -2,7 +2,7 @@ import { WebSocket } from "ws";
 import { CustomError } from "./error";
 import { sendError, errorCodes } from "./error";
 
-export const catchSocketAsynchAsynchError = (
+export const catchSocketAsyncError = (
   func: (...args: any[]) => Promise<any>,
 ) => {
   return async (...args: any[]): Promise<any> => {
@@ -13,7 +13,7 @@ export const catchSocketAsynchAsynchError = (
       console.error("Socket async error:", error);
 
       if (ws && ws.readyState === ws.OPEN && error instanceof Error) {
-        sendError(ws, errorCodes[error.name], errorCodes[error.name]?.code);
+        sendError(ws, error.name, error.message);
         new CustomError(`SOCKET_ERROR: ${error.message}`);
       } else if (error instanceof Error) {
         console.log("Error occurred, cannot send to socket:", error.message);

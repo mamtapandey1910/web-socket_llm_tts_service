@@ -10,7 +10,7 @@ export class CustomError extends Error implements ErrorTypes {
   }
 }
 
-const errorCodes: Record<string, any> = {
+const errorCodes: Record<string, { code: number; message: string }> = {
   INVALID_REQUEST: { code: 400, message: "Invalid request data." },
   PROCESSING_ERROR: {
     code: 500,

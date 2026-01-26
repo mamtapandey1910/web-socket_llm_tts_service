@@ -68,6 +68,12 @@ explaination of folders:
 - server/: Contains the WebSocket server implementation and connection handling.
 - services/: **Contains the LLM and TTS service implementations. I have created separate services for LLM and TTS to keep the code modular and maintainable. LLM service generates texts in chunks so I have created a queue to store those chunks and stream it to the client. I have created a buffer string to avoid sending every small chunks to the text-to-speech service. the buffer will accumulate the chunks until it reaches a certain size before sending it to the TTS service. This reduces the number of requests made to the TTS service and improves overall efficiency.**
 
+- llmService.ts: Handles communication with the OpenAI API to generate text based on user prompts.
+- ttsService.ts: Handles communication with the TTS service to convert text segments into speech
+
 - sessions/: Manages user sessions and their associated data. This need to be improved for production use.
 - types/: Contains TypeScript type definitions for various parts of the application.
 - utils/: Contains utility functions used throughout the application.
+  error handling has been done using custom error class and catchAsyncError utility to handle asynchronous errors in the application.
+  **queue.ts** contains the custom queue implementation for handling streaming data.
+  **segmentText.ts** contains logic to split the buffered sentences into smaller segments before sending them to the TTS service. This is important because sending every chunk to exhausts the TTS service quickly and also increases the latency. So I have created a function to segment the sentences into smaller parts based on punctuation and length.

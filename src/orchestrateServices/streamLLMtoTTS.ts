@@ -1,31 +1,34 @@
+import { WebSocket } from "ws";
 import { TTSQueue } from "../utils/queue";
 import { splitTextIntoSegment } from "../utils/segmentText";
 import { generateLLMTextUsingStream } from "../services/llmService";
 import { catchSocketAsyncError } from "../utils/catchAsyncError";
 import { CustomError } from "../utils/error";
 import { StreamLLMToTTSType } from "../types/orchestrateServicesType/streamLLMtoTTSType";
-import { WebSocket } from "ws";
 
-// This function is to get the LLM generated data, make it a buffer string of minimum size 150 and call Text to Speech API to convert it to audio.
 export const streamLLMToTTS: StreamLLMToTTSType = catchSocketAsyncError(
   async (session: WebSocket, promptText: string) => {
-    // It will return event emitter hence listening to it's event to access chunks
     const llmStream = await generateLLMTextUsingStream(session, promptText);
 
     if (!session || !llmStream) {
-      throw new CustomError(
-        "streamLLMToTTS : session or  llmStream is possibly undefined",
-      );
+      throw new CustomError("session or llmStream missing");
     }
 
-    // text approx 150 text long to send it to TTSqueue
     let textBuffer = "";
 
-    const ttsQueue = new TTSQueue(session, (audio) => {
-      if (session.readyState === session.OPEN) {
-        session.send(audio);
-      }
-    });
+    const ttsQueue = new TTSQueue(
+      session,
+      (audio: Buffer) => {
+        if (session.readyState === WebSocket.OPEN) {
+          session.send(audio);
+        }
+      },
+      () => {
+        if (session.readyState === WebSocket.OPEN) {
+          session.send(JSON.stringify({ type: "TTS_END" }));
+        }
+      },
+    );
 
     llmStream.on("text", (chunk: string) => {
       textBuffer += chunk;
@@ -34,12 +37,11 @@ export const streamLLMToTTS: StreamLLMToTTSType = catchSocketAsyncError(
       const endsSentence =
         lastChar === "." || lastChar === "!" || lastChar === "?";
 
-      // check if sentence has ended either before 150 char length or before 150 charlength
-      const splitAndSendToQueue =
+      const shouldSplit =
         textBuffer.length >= Number(process.env.SEGMENT_SIZE || 150) ||
         endsSentence;
 
-      if (splitAndSendToQueue) {
+      if (shouldSplit) {
         const segments = splitTextIntoSegment(textBuffer);
         segments.forEach((seg) => ttsQueue.enqueue(seg));
         textBuffer = "";
@@ -51,11 +53,19 @@ export const streamLLMToTTS: StreamLLMToTTSType = catchSocketAsyncError(
         const segments = splitTextIntoSegment(textBuffer);
         segments.forEach((seg) => ttsQueue.enqueue(seg));
       }
+      ttsQueue.close();
     });
 
     llmStream.on("error", (err: Error) => {
-      console.error("LLM error :---", err);
-      if (session.readyState === session.OPEN) {
+      console.error("LLM stream error", err);
+
+      if (session.readyState === WebSocket.OPEN) {
+        session.send(
+          JSON.stringify({
+            type: "ERROR",
+            message: "LLM generation failed",
+          }),
+        );
         session.close();
       }
     });

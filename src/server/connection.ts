@@ -1,6 +1,6 @@
 import { WebSocket, RawData } from "ws";
 import { Request } from "express";
-import { handleMessage } from "./handleMessage";
+import { handleMessage } from "./routeMessage";
 import { createSession } from "../sessions/sessionStore";
 import { sendMessage } from "../utils/sendMessage";
 import { catchSocketAsyncError } from "../utils/catchAsyncError";

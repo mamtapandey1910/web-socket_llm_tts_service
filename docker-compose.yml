@@ -7,7 +7,17 @@ services:
     ports:
       - "8000:8000"
     environment:
+      OPENAI_API_KEY: testKey
       SEGMENT_SIZE: 150
       PORT: 8000
     stdin_open: true
     tty: true
+
+  frontend:
+    image: mamtapandey/ttsfe:tts
+    build: .
+    ports:
+      - "3000:3000"
+    restart: always
+    depends_on:
+      - tts-service

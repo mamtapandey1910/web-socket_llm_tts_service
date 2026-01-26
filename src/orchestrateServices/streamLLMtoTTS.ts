@@ -54,7 +54,7 @@ export const streamLLMToTTS: StreamLLMToTTSType = catchSocketAsyncError(
     });
 
     llmStream.on("error", (err: Error) => {
-      console.error("LLM error:", err);
+      console.error("LLM error :---", err);
       if (session.readyState === session.OPEN) {
         session.close();
       }

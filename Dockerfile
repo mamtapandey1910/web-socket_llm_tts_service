@@ -1,5 +1,4 @@
-FROM node
-
+FROM node:18-alpine
 
 #setup working directory
 WORKDIR /app
@@ -9,7 +8,7 @@ COPY . /app
 
 EXPOSE 8000
 
-ENV SEGMENT_SIZE = 150
+ENV SEGMENT_SIZE=150
 ENV PORT=8000
 
 #install all the dependencies

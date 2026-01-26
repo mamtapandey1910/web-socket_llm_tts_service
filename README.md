@@ -5,7 +5,8 @@ Context - I have created this application using raw socket and not any other fra
 **The purpose of creating and streaming chunks is to reduce the latency between openai response and client receive. So instead of waiting for whole response from openai I have streamed it to client in chunks and that reduced the latency and gave better user experience.**
 
 how to run the application?
-prerequisites:
+
+### prerequisites:
 
 1. Node.js installed on your machine.
 2. Has An OpenAI API key.
@@ -14,7 +15,7 @@ prerequisites:
 5. Start the frontend server using "npm start".
    Make sure the frontend is running on port 3000.
 
-   Steps to run:
+### Steps to run:
 
 6. Clone the repository to your local machine.
 7. Navigate to the project directory.

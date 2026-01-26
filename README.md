@@ -22,18 +22,23 @@ prerequisites:
 9. Create a config folder in the root directory and inside that create a config.env file.
 10. Add your OpenAI API key in the config.env file as follows
     OPENAI_API_KEY=your_openai_api_key_here
-11. Start the server using "npm start".
+11. "npm run compile" to compile the TypeScript code to JavaScript.
+12. Start the server using "npm start".
     for development mode you can use "npm run dev" which will use nodemon to restart the server on file changes.
 
 ## Folder Structure
 
+web-socket_llm_tts_service/
+├── src/
+│ ├── app.ts
+│ ├── index.ts
 │ ├── agentConfig/
-│ │ └── openaiConfig.ts // Added OpenAI configuration here
+│ │ └── openaiConfig.ts
 │ ├── orchestrateServices/
 │ │ └── streamLLMtoTTS.ts
 │ ├── server/
-│ │ ├── connection.ts
-│ │ ├── routeMessage.ts
+│ │ ├── connection.ts // handles websocket connections
+│ │ ├── handleMessage.ts
 │ │ └── wsServer.ts
 │ ├── services/
 │ │ ├── llmService.ts
@@ -60,6 +65,18 @@ prerequisites:
 │ ├── queue.ts
 │ ├── segmentText.ts
 │ └── sendMessage.ts
+├── tests/
+│ ├── websocket.test.js
+│ ├── llm.test.js
+│ └── tts.test.js
+├── config/
+│ ├── default.json
+│ └── production.json
+├── public/
+│ └── index.html
+├── package.json
+├── .env
+└── README.md
 
 explaination of folders:
 

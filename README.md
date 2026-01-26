@@ -19,12 +19,12 @@ how to run the application?
 
 6. Clone the repository to your local machine.
 7. Navigate to the project directory.
-8. Install the dependencies using "npm install".
+8. Install the dependencies using `npm install`.
 9. Create a config folder in the root directory and inside that create a config.env file.
 10. Add your OpenAI API key in the config.env file as follows
     OPENAI_API_KEY=your_openai_api_key_here
-11. "npm run compile" to compile the TypeScript code to JavaScript.
-12. Start the server using "npm start".
+11. `npm run compile` to compile the TypeScript code to JavaScript.
+12. Start the server using `npm start`.
     for development mode you can use "npm run dev" which will use nodemon to restart the server on file changes.
 
 ## Folder Structure

@@ -66,8 +66,7 @@ explaination of folders:
 - agentConfig/: Contains configuration settings for the OpenAI API.
 - orchestrateServices/: Contains logic to orchestrate the flow of data between LLM and TTS services.
 - server/: Contains the WebSocket server implementation and connection handling.
-
-### - services/: Contains the LLM and TTS service implementations. I have created separate services for LLM and TTS to keep the code modular and maintainable. LLM service generates texts in chunks so I have created a queue to store those chunks and stream it to the client. I have created a buffer string to avoid sending every small chunks to the text-to-speech service. the buffer will accumulate the chunks until it reaches a certain size before sending it to the TTS service. This reduces the number of requests made to the TTS service and improves overall efficiency.
+- services/: **Contains the LLM and TTS service implementations. I have created separate services for LLM and TTS to keep the code modular and maintainable. LLM service generates texts in chunks so I have created a queue to store those chunks and stream it to the client. I have created a buffer string to avoid sending every small chunks to the text-to-speech service. the buffer will accumulate the chunks until it reaches a certain size before sending it to the TTS service. This reduces the number of requests made to the TTS service and improves overall efficiency.**
 
 - sessions/: Manages user sessions and their associated data. This need to be improved for production use.
 - types/: Contains TypeScript type definitions for various parts of the application.

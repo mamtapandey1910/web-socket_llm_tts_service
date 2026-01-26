@@ -1,4 +1,4 @@
-import { handleMessage } from "../../src/server/routeMessage";
+import { handleMessage } from "../../src/server/handleMessage";
 
 describe("handle message", () => {
   it("should handle a message correctly", () => {

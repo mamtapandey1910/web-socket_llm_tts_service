@@ -6,8 +6,8 @@ import { SessionType } from "../types/sessionType/sessionStoreType";
 import { handleMessageType } from "../types/serverTypes/routeMessageType";
 
 export const handleMessage: handleMessageType = catchSocketAsyncError(
-  async (session: WebSocket, rawData: any) => {
+  async (socket: WebSocket, rawData: any) => {
     const data = JSON.parse(rawData);
-    await streamLLMToTTS(session, data.message);
+    await streamLLMToTTS(socket, data.message);
   },
 );

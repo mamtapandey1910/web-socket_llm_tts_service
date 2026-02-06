@@ -19,6 +19,7 @@ export const handleWSConnection: handleWSConnectionType = catchSocketAsyncError(
           type: "error",
           message: "Empty message received",
         });
+        return;
       }
       sendMessage(socket, JSON.stringify({ message: "Thinking..." }));
       handleMessage(socket, data);
@@ -26,12 +27,12 @@ export const handleWSConnection: handleWSConnectionType = catchSocketAsyncError(
 
     socket.on("close", () => {
       console.log("Connection closed");
-      sendMessage(socket, "Connection Closed");
+      // sendMessage(socket, "Connection Closed");
     });
 
     socket.on("error", () => {
       console.log("Socket error has been occured");
-      sendMessage(socket, "Socket error has been occured");
+      // sendMessage(socket, "Socket error has been occured");
     });
   },
 );

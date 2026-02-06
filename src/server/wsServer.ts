@@ -29,7 +29,7 @@ export const closeWebSocketServer = () => {
 
   wss.clients.forEach((client: WebSocket) => {
     if (client.readyState === WebSocket.OPEN) {
-      client.close(1001, "Server shutting down");
+      client.close(1001, "Server shutting down"); // going away
     }
   });
 

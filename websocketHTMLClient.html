@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WebSocket TTS Test</title>
+  </head>
+  <body>
+    <h2>WebSocket TTS Test</h2>
+
+    BUTTON: Make sure ID matches JS
+    <button id="sendBtn">Send Text & Play Audio</button>
+
+    <!-- <script>
+      // Wait for DOM to fully load
+      document.addEventListener("DOMContentLoaded", () => {
+        const ws = new WebSocket("ws://localhost:8000");
+        ws.binaryType = "arraybuffer";
+
+        // Web Audio API setup
+        const audioContext = new (
+          window.AudioContext || window.webkitAudioContext
+        )();
+        let nextPlayTime = audioContext.currentTime;
+
+        // Listen for audio chunks from server
+        ws.onmessage = async (event) => {
+          if (!event.data) return;
+
+          try {
+            // Decode incoming ArrayBuffer into AudioBuffer
+            const audioBuffer = await audioContext.decodeAudioData(
+              event.data.slice(0),
+            );
+
+            // Create buffer source for playback
+            const source = audioContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+
+            // Schedule playback sequentially
+            source.start(nextPlayTime);
+            nextPlayTime += audioBuffer.duration;
+          } catch (err) {
+            console.error("Audio decode/play error:", err);
+          }
+        };
+
+        // Handle send button click
+        const sendBtn = document.getElementById("sendBtn");
+
+        if (!sendBtn) {
+          console.error("sendBtn not found in DOM");
+          return;
+        }
+
+        sendBtn.onclick = async () => {
+          // Resume AudioContext if suspended
+          if (audioContext.state === "suspended") {
+            await audioContext.resume();
+          }
+
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ message: "tell me a short story" }));
+          } else {
+            console.warn("WebSocket not open yet");
+          }
+        };
+      });
+    </script> -->
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const ws = new WebSocket("ws://localhost:8000");
+        ws.binaryType = "arraybuffer";
+
+        const audioContext = new (
+          window.AudioContext || window.webkitAudioContext
+        )();
+
+        const audioQueue = [];
+        let isPlaying = false;
+
+        // Handle incoming audio chunks
+        ws.onmessage = async (event) => {
+          if (!event.data) return;
+
+          try {
+            // Decode audio to AudioBuffer
+            const audioBuffer = await audioContext.decodeAudioData(
+              event.data.slice(0),
+            );
+            // Push to queue
+            audioQueue.push(audioBuffer);
+
+            // Start playback if nothing is playing
+            playNext();
+          } catch (err) {
+            console.error("Audio decode error:", err);
+          }
+        };
+
+        // Sequential playback function
+        function playNext() {
+          if (isPlaying) return; // Already playing
+          if (audioQueue.length === 0) return;
+
+          isPlaying = true;
+          const buffer = audioQueue.shift(); // Get next AudioBuffer
+
+          const source = audioContext.createBufferSource();
+          source.buffer = buffer;
+          source.connect(audioContext.destination);
+
+          source.onended = () => {
+            isPlaying = false;
+            playNext(); // Play next chunk
+          };
+          source.start();
+        }
+
+        // Send button
+        const sendBtn = document.getElementById("sendBtn");
+        if (!sendBtn) return console.error("sendBtn not found");
+
+        sendBtn.onclick = async () => {
+          if (audioContext.state === "suspended") {
+            await audioContext.resume();
+          }
+
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(
+              JSON.stringify({
+                messageId: "12345",
+                message: "tell me a story",
+              }),
+            );
+          } else {
+            console.warn("WebSocket not open yet");
+          }
+        };
+      });
+    </script>
+  </body>
+</html>

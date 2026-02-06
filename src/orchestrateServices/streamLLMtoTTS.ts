@@ -7,25 +7,26 @@ import { CustomError } from "../utils/error";
 import { StreamLLMToTTSType } from "../types/orchestrateServicesType/streamLLMtoTTSType";
 
 export const streamLLMToTTS: StreamLLMToTTSType = catchSocketAsyncError(
-  async (session: WebSocket, promptText: string) => {
-    const llmStream = await generateLLMTextUsingStream(session, promptText);
+  async (socket: WebSocket, promptText: string) => {
+    const llmStream = await generateLLMTextUsingStream(socket, promptText);
 
-    if (!session || !llmStream) {
+    if (!socket || !llmStream) {
       throw new CustomError("session or llmStream missing");
     }
 
     let textBuffer = "";
 
+    // Instantiate queue
     const ttsQueue = new TTSQueue(
-      session,
+      socket,
       (audio: Buffer) => {
-        if (session.readyState === WebSocket.OPEN) {
-          session.send(audio);
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(audio);
         }
       },
       () => {
-        if (session.readyState === WebSocket.OPEN) {
-          session.send(JSON.stringify({ type: "TTS_END" }));
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(JSON.stringify({ type: "TTS_END" }));
         }
       },
     );
@@ -59,14 +60,14 @@ export const streamLLMToTTS: StreamLLMToTTSType = catchSocketAsyncError(
     llmStream.on("error", (err: Error) => {
       console.error("LLM stream error", err);
 
-      if (session.readyState === WebSocket.OPEN) {
-        session.send(
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(
           JSON.stringify({
             type: "ERROR",
             message: "LLM generation failed",
           }),
         );
-        session.close();
+        socket.close();
       }
     });
   },
